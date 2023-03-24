@@ -1,23 +1,33 @@
 import java.util.ArrayList;
 public class VolumeGroup extends Volume {
-    public PhysicalVolume[] pv;
-    public LogicalVolume[] lv;
+    public PhysicalVolume pv;
+    public LogicalVolume lv;
     public int size;
 
-    public VolumeGroup(String name, PhysicalVolume[] pv, LogicalVolume[] lv) {
+    public VolumeGroup(String name) {
         super(name);
-        this.pv = pv;
-        this.lv = lv;
+    }
+
+    public ArrayList<PhysicalVolume> getPvList() {
+        return pv.getPvList();
+    }
+
+    public ArrayList<LogicalVolume> getLvList() {
+        return lv.getLvList();
     }
 
     public int getTotalVGSize() {
-        return pv.length * pv[0].getSize();
+        int sum = 0;
+        for(int i = 0; i < getPvList().size(); i++){
+            sum += pv.getPvList().get(i).getSize();
+        }
+        return sum;
     }
     public int getTotalFreeSpace(){
-        int sum = 0;
-        for(int i = 0; i < lv.length; i++){
-            //
+        int freeSpace = getTotalVGSize();
+        for(int i = 0; i < getLvList().size(); i++){
+            freeSpace -= getLvList().get(i).getSize();
         }
-        return getTotalVGSize();
+        return freeSpace;
     }
 }

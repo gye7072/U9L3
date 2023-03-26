@@ -1,33 +1,44 @@
-import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.*;
+
 public class VolumeGroup extends Volume {
-    public PhysicalVolume pv;
-    public LogicalVolume lv;
-    public int size;
+    public ArrayList<PhysicalVolume> pvs = new ArrayList<PhysicalVolume>();
+    public ArrayList<LogicalVolume> lvs = new ArrayList<LogicalVolume>();
 
     public VolumeGroup(String name) {
         super(name);
     }
 
-    public ArrayList<PhysicalVolume> getPvList() {
-        return pv.getPvList();
+    public void addPv(PhysicalVolume pv) {
+        pvs.add(pv);
     }
 
-    public ArrayList<LogicalVolume> getLvList() {
-        return lv.getLvList();
+    public ArrayList<PhysicalVolume> getPvs() {
+        return pvs;
     }
 
-    public int getTotalVGSize() {
-        int sum = 0;
-        for(int i = 0; i < getPvList().size(); i++){
-            sum += pv.getPvList().get(i).getSize();
-        }
-        return sum;
+    public ArrayList<LogicalVolume> getLvs() {
+        return lvs;
     }
-    public int getTotalFreeSpace(){
-        int freeSpace = getTotalVGSize();
-        for(int i = 0; i < getLvList().size(); i++){
-            freeSpace -= getLvList().get(i).getSize();
+
+    public void addLv(LogicalVolume lv) {
+        lvs.add(lv);
+    }
+
+
+    public int getTotalSize() {
+        int totalSize = 0;
+        for (PhysicalVolume pv : pvs) {
+            totalSize += pv.getSize();
         }
-        return freeSpace;
+        return totalSize;
+    }
+
+    public int getFreeSize() {
+        int freeSize = getTotalSize();
+        for (LogicalVolume lv : lvs) {
+            freeSize -= lv.getSize();
+        }
+        return freeSize;
     }
 }

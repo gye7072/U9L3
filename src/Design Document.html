@@ -1,0 +1,57 @@
+SuperClass: Volume
+name (String): Name of the subclass
+UUID (String): UUID of the subclass
+Methods:
+getName(): returns the name of the subclass
+getUUID(): returns the UUID of the subclass
+
+
+SubClass [Volume] 1: PhysicalDrive
+Attributes:
+size (int): Size of the physical drive in GB
+Methods:
+getSize(): returns the size of the physical drive in GB
+
+SubClass [Volume] 2: PhysicalVolume
+Attributes:
+drive (PhysicalDrive): Associated physical drive
+Methods:
+getDrive(): returns the associated physical drive
+getSize(): returns the size of the physical volume (same as associated physical drive)
+
+SubClass [Volume] 3: VolumeGroup
+Attributes:
+pvs: List of physical volumes in the volume group
+lvs: List of logical volumes in the volume group
+Methods:
+getPvs(): returns the list of physical volumes in the volume group
+getLvs(): returns the list of logical volumes in the volume group
+getTotalSize(): returns the total size of the volume group (sum of all physical volumes' sizes)
+getFreeSize(): returns the amount of free space in the volume group (total size minus sum of all logical volumes' sizes)
+
+SubClass [Volume] 4: LogicalVolume
+Attributes:
+size (int): Size of the logical volume in GB
+vg (VolumeGroup): Associated volume group
+Methods:
+getSize(): returns the size of the logical volume
+getVg(): returns the associated volume group
+
+Class 5: LVMSystem
+Methods:
+installDrive(String name, int size): installs a new physical drive with the given name and size
+listDrives(): lists all installed physical drives with their names, sizes, and UUIDs
+createPv(String name, String driveName): creates a new physical volume with the given name and associates it with the physical drive with the given name
+listPvs(): lists all physical volumes with their names, sizes, associated volume group (if any), and UUIDs
+createVg(String name, ArrayList pvNames:creates a new volume group with the given name and includes the physical volumes with the given names
+listVgs(): lists all volume groups with their names, total sizes, free sizes, list of physical volumes, list of logical volumes, and UUIDs
+createLv(String name, int size, String vgName): creates a new logical volume with the given name, size, and associates it with the volume group with the given name
+listLvs(): lists all logical volumes with their names, sizes, associated volume group, and UUIDs
+saveData(): saves all information entered by the user (drives, physical volumes, volume groups,etc)
+
+Class 6: UUIDGenerator
+Attribute:
+UUID (String): the string of the UUID
+Method:
+UUIDGenerator(): generates a unique UUID
+getUUID(): returns the unique UUID

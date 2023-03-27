@@ -16,10 +16,10 @@ public class LVMSystem {
     public void listDrives() {
         if (drives.isEmpty()) {
             System.out.println("No drives are installed.");
-            return;
-        }
-        for (int i = 0; i < drives.size(); i++) {
-            System.out.println(drives.get(i).getName() + " [" + drives.get(i).getSize() + "G]" + " [" + drives.get(i).getUUID() + "]");
+        } else {
+            for (int i = 0; i < drives.size(); i++) {
+                System.out.println(drives.get(i).getName() + " [" + drives.get(i).getSize() + "G]" + " [" + drives.get(i).getUUID() + "]");
+            }
         }
     }
 
@@ -36,11 +36,11 @@ public class LVMSystem {
         PhysicalHardDrive drive = findDrive(driveName);
         if (drive == null) {
             System.out.println("Drive not found: " + driveName);
-            return;
+        } else {
+            PhysicalVolume pv = new PhysicalVolume(name, drive);
+            pvs.add(pv);
+            System.out.println(pv.getName() + " created");
         }
-        PhysicalVolume pv = new PhysicalVolume(name, drive);
-        pvs.add(pv);
-        System.out.println(pv.getName() + " created");
     }
 
     public void listPvs() {
@@ -63,12 +63,12 @@ public class LVMSystem {
         PhysicalVolume pv = findPV(pvName);
         if (pv == null) {
             System.out.println("Physical volume not found: " + pvName);
-            return;
+        } else {
+            VolumeGroup vg = new VolumeGroup(vgName);
+            vg.addPv(pv);
+            vgs.add(vg);
+            System.out.println(vg.getName() + " created");
         }
-        VolumeGroup vg = new VolumeGroup(vgName);
-        vg.addPv(pv);
-        vgs.add(vg);
-        System.out.println(vg.getName() + " created");
     }
 
     private VolumeGroup findVG(String name) {
@@ -86,10 +86,10 @@ public class LVMSystem {
         PhysicalVolume pv = findPV(pvName);
         if (vg == null || pv == null) {
             System.out.println("Volume Group not found: " + vgName + " or Physical volume not found: " + pvName);
-            return;
+        } else {
+            vg.addPv(pv);
+            System.out.println(pvName + " added to " + vg.getName());
         }
-        vg.addPv(pv);
-        System.out.println(pvName + " added to " + vg.getName());
     }
 
     public void listVgs() {
@@ -108,23 +108,15 @@ public class LVMSystem {
 
     public void createLv(String lvName, int size, String vgName) {
         VolumeGroup vg = findVG(vgName);
-        if (vg == null || size > vg.getFreeSize()) {
+        if (vg == null || size > vg.getFreeSize() || vg.getName().equals(lvName)) {
             System.out.println(lvName + " creation failed");
-            return;
         }
-        for(VolumeGroup volumeGroup: vgs) {
-            for (int i = 0; i < volumeGroup.getLvs().size(); i++) {
-                if (volumeGroup.getLvs().get(i).getName().equals(lvName)) {
-                    System.out.println(lvName + " creation failed");
-                    return;
-                }
-            }
+        else{
+            LogicalVolume lv = new LogicalVolume(lvName, size, vg);
+            vg.addLv(lv);
+            System.out.println(lvName + " " + size + "G" + " " + vgName);
+            System.out.println(lvName + " created");
         }
-
-        LogicalVolume lv = new LogicalVolume(lvName, size, vg);
-        vg.addLv(lv);
-        System.out.println(lvName + " " + size + "G" + " " + vgName);
-        System.out.println(lvName + " created");
     }
 
     public void listLvs() {
